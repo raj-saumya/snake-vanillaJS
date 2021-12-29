@@ -1,0 +1,21 @@
+html {
+  box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+button * {
+  cursor: pointer;
+}
+
+.abs-center {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: auto;
+  bottom: 24px;
+}
