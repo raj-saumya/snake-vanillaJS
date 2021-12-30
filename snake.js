@@ -1,21 +1,96 @@
+/**
+ ***************************************************************************
+ Constant declaration 
+ */
 const body = document.body;
 const container = document.getElementById("main");
 const scoreSpan = document.getElementById("score");
 const startBtn = document.getElementById("start");
 const controller = document.getElementById("controller");
+const scoreCard = document.getElementById("score-card");
+const finalScore = document.getElementById("final-score");
+const restartBtn = document.getElementById("restart");
 const B_HEIGHT = container.offsetHeight;
 const B_WIDTH = container.offsetWidth;
 const BOX_SIZE = 24;
 const GUTTER = 2;
-const SNAKE_COLOR = "#064e3b";
+const SNAKE_COLOR = "rgb(6, 78, 59)";
 const GRID_CELL_COLOR = "transparent";
 const FOOD_COLOR = "red";
-const SNAKE = [[0, 0]];
-let score = 0;
+const SNAKE = [
+  [0, 0],
+  [0, 1],
+  [0, 2],
+];
 const ROWS = Math.floor(B_HEIGHT / (BOX_SIZE + GUTTER));
 const COLS = Math.floor(B_WIDTH / (BOX_SIZE + GUTTER));
+/**
+ ***************************************************************************
+ */
+
+let score = 0;
 let SNAKE_DIR = "RIGHT";
-let INTERVAL_ID = null;
+let GAME_INTERVAL_ID = null;
+let FOOD_INTERVAL_ID = null;
+
+const cycle = (n) => (x) => (n + (x % n)) % n;
+
+ROWS_CYCLE = cycle(ROWS);
+COLS_CYCLE = cycle(COLS);
+
+/**
+ * init game event listeners
+ * @returns {void}
+ */
+const initGameListener = () => {
+  startBtn.firstElementChild.addEventListener("click", () => {
+    startBtn.classList.add("hidden");
+    controller.classList.remove("hidden");
+    startGame();
+  });
+
+  controller.addEventListener("click", ({ target }) => {
+    if (target.closest("button")) {
+      const direction = target.closest("button").dataset.direction;
+      const callback = {
+        left: SNAKE_DIR !== "RIGHT" ? () => (SNAKE_DIR = "LEFT") : () => {},
+        right: SNAKE_DIR !== "LEFT" ? () => (SNAKE_DIR = "RIGHT") : () => {},
+        up: SNAKE_DIR !== "DOWN" ? () => (SNAKE_DIR = "UP") : () => {},
+        down: SNAKE_DIR !== "UP" ? () => (SNAKE_DIR = "DOWN") : () => {},
+      }[direction];
+      callback?.();
+    }
+  });
+
+  restartBtn.addEventListener("click", () => {
+    scoreCard.classList.add("hidden");
+    score = 0;
+    SNAKE_DIR = "RIGHT";
+    GAME_INTERVAL_ID = null;
+    SNAKE.length = 0;
+    SNAKE.push([0, 0], [0, 1], [0, 2]);
+    scoreSpan.innerText = score;
+    createGrid(ROWS, COLS, BOX_SIZE);
+    initSnake(SNAKE, SNAKE_COLOR, GAME_INTERVAL_ID);
+    startGame();
+  });
+};
+
+/**
+ * function to init event listener for arrow keypress
+ * @returns {void}
+ */
+const initKeyboardEventListener = () => {
+  window.addEventListener("keydown", ({ key }) => {
+    const callback = {
+      ArrowLeft: SNAKE_DIR !== "RIGHT" ? () => (SNAKE_DIR = "LEFT") : () => {},
+      ArrowRight: SNAKE_DIR !== "LEFT" ? () => (SNAKE_DIR = "RIGHT") : () => {},
+      ArrowUp: SNAKE_DIR !== "DOWN" ? () => (SNAKE_DIR = "UP") : () => {},
+      ArrowDown: SNAKE_DIR !== "UP" ? () => (SNAKE_DIR = "DOWN") : () => {},
+    }[key];
+    callback?.();
+  });
+};
 
 /**
  * function to create grid for snake game
@@ -25,6 +100,7 @@ let INTERVAL_ID = null;
  * @returns {void}
  */
 const createGrid = (rows, cols, size) => {
+  container.innerHTML = "";
   for (let i = 0; i < cols; i++) {
     for (let j = 0; j < rows; j++) {
       const box = document.createElement("div");
@@ -41,46 +117,16 @@ const createGrid = (rows, cols, size) => {
   }px`;
 };
 
-const initGameListener = () => {
-  body.addEventListener("click", ({ target }) => {
-    if (target.closest("#start")) {
-      startBtn.classList.add("hidden");
-      controller.classList.remove("hidden");
-      startGame();
-    } else if (target.closest("button")) {
-      const direction = target.closest("button").dataset.direction;
-      const callback = {
-        left: SNAKE_DIR !== "RIGHT" ? () => (SNAKE_DIR = "LEFT") : () => {},
-        right: SNAKE_DIR !== "LEFT" ? () => (SNAKE_DIR = "RIGHT") : () => {},
-        up: SNAKE_DIR !== "DOWN" ? () => (SNAKE_DIR = "UP") : () => {},
-        down: SNAKE_DIR !== "UP" ? () => (SNAKE_DIR = "DOWN") : () => {},
-      }[direction];
-      callback?.();
-    }
-  });
-};
-
-/**
- * function to init event listener for arrow keypress
- */
-const initKeyboardEventListener = () => {
-  window.addEventListener("keydown", ({ key }) => {
-    const callback = {
-      ArrowLeft: SNAKE_DIR !== "RIGHT" ? () => (SNAKE_DIR = "LEFT") : () => {},
-      ArrowRight: SNAKE_DIR !== "LEFT" ? () => (SNAKE_DIR = "RIGHT") : () => {},
-      ArrowUp: SNAKE_DIR !== "DOWN" ? () => (SNAKE_DIR = "UP") : () => {},
-      ArrowDown: SNAKE_DIR !== "UP" ? () => (SNAKE_DIR = "DOWN") : () => {},
-    }[key];
-    callback?.();
-  });
-};
-
 /**
  * function to return grid items/cells
  * @returns {HTMLDivElement}
  */
 const getGridItems = () => container.children;
 
+/**
+ * sets the cell background
+ * @returns {void}
+ */
 const colorGridCell = (position, color, id) => {
   const grids = getGridItems();
   const [row, col] = position;
@@ -105,16 +151,17 @@ const initSnake = (snake = [], color, id) => {
   });
 };
 
-const cycle = (n) => (x) => (n + (x % n)) % n;
-
-ROWS_CYCLE = cycle(ROWS);
-COLS_CYCLE = cycle(COLS);
-
 const checkFoodGrab = (SNAKE) => {
   const grid = getGridItems();
   const head = SNAKE[SNAKE.length - 1];
   const [row, col] = head;
   const cell = grid[row + col * ROWS];
+  if (cell && cell.style.background === SNAKE_COLOR) {
+    clearInterval(GAME_INTERVAL_ID);
+    clearInterval(FOOD_INTERVAL_ID);
+    gameOver();
+    return false;
+  }
   return cell && cell.style.background === FOOD_COLOR;
 };
 
@@ -169,25 +216,29 @@ const generateRandom = (max, min) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
 
 const spawnFood = (interval) => {
-  let id = setInterval(() => {
-    clearInterval(id);
+  FOOD_INTERVAL_ID = setInterval(() => {
+    clearInterval(FOOD_INTERVAL_ID);
     let row = generateRandom(ROWS - 1, 0);
     let col = generateRandom(COLS - 1, 0);
     colorGridCell([row, col], FOOD_COLOR);
   }, interval);
 };
 
-const startGame = () => {
-  INTERVAL_ID = setInterval(() => {
-    const [tail, head] = moveSnake();
-    colorGridCell(tail, GRID_CELL_COLOR, INTERVAL_ID);
-    colorGridCell(head, SNAKE_COLOR, INTERVAL_ID);
-  }, 160);
+const gameOver = () => {
+  finalScore.innerText = score;
+  scoreCard.classList.remove("hidden");
+};
 
+const startGame = () => {
+  GAME_INTERVAL_ID = setInterval(() => {
+    const [tail, head] = moveSnake();
+    colorGridCell(tail, GRID_CELL_COLOR, GAME_INTERVAL_ID);
+    colorGridCell(head, SNAKE_COLOR, GAME_INTERVAL_ID);
+  }, 160);
   spawnFood(4000);
 };
 
 initGameListener();
 initKeyboardEventListener();
 createGrid(ROWS, COLS, BOX_SIZE);
-initSnake(SNAKE, SNAKE_COLOR, INTERVAL_ID);
+initSnake(SNAKE, SNAKE_COLOR, GAME_INTERVAL_ID);

@@ -116,6 +116,60 @@
         </button>
       </div>
     </div>
+    <div
+      id="score-card"
+      class="
+        h-screen
+        w-screen
+        fixed
+        flex
+        items-center
+        justify-center
+        top-0
+        left-0
+        backdrop-blur-sm
+        hidden
+      "
+    >
+      <div
+        class="
+          flex flex-col
+          w-64
+          items-center
+          bg-emerald-900
+          p-6
+          rounded
+          shadow-lg shadow-black/20
+        "
+      >
+        <img src="asset/icon-skull.svg" alt="icon-skull" />
+        <div class="h-8"></div>
+        <label class="font-mono text-white text-2xl mb-2">GAME OVER</label>
+        <div class="h-4"></div>
+        <label class="font-mono text-white text-base mb-2"
+          >FINAL SCORE - <span id="final-score">0</span></label
+        >
+        <div class="h-8"></div>
+        <button
+          id="restart"
+          class="
+            shadow-lg shadow-black/20
+            active:bg-emerald-600
+            h-12
+            w-32
+            m-1
+            p-1
+            bg-emerald-700
+            flex
+            items-center
+            justify-center
+            rounded
+          "
+        >
+          <label class="font-mono text-base text-white">RESTART</label>
+        </button>
+      </div>
+    </div>
   </body>
   <script src="./snake.js"></script>
 </html>
