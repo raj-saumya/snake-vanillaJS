@@ -3,8 +3,8 @@ const container = document.getElementById("main");
 const scoreSpan = document.getElementById("score");
 const startBtn = document.getElementById("start");
 const controller = document.getElementById("controller");
-const B_HEIGHT = body.offsetHeight;
-const B_WIDTH = body.offsetWidth;
+const B_HEIGHT = container.offsetHeight;
+const B_WIDTH = container.offsetWidth;
 const BOX_SIZE = 24;
 const GUTTER = 2;
 const SNAKE_COLOR = "#064e3b";
@@ -12,8 +12,8 @@ const GRID_CELL_COLOR = "transparent";
 const FOOD_COLOR = "red";
 const SNAKE = [[0, 0]];
 let score = 0;
-const ROWS = Math.floor((B_HEIGHT - 240) / (BOX_SIZE + GUTTER));
-const COLS = Math.floor((B_WIDTH - 40) / (BOX_SIZE + GUTTER));
+const ROWS = Math.floor(B_HEIGHT / (BOX_SIZE + GUTTER));
+const COLS = Math.floor(B_WIDTH / (BOX_SIZE + GUTTER));
 let SNAKE_DIR = "RIGHT";
 let INTERVAL_ID = null;
 
@@ -37,7 +37,7 @@ const createGrid = (rows, cols, size) => {
     }
   }
   container.style.marginLeft = `${
-    B_WIDTH / 2 - (COLS / 2) * (BOX_SIZE + GUTTER) - 24
+    B_WIDTH / 2 - (COLS / 2) * (BOX_SIZE + GUTTER)
   }px`;
 };
 

@@ -12,10 +12,6 @@ button * {
   cursor: pointer;
 }
 
-.abs-center {
-  position: absolute;
-  left: 0;
-  right: 0;
-  margin: auto;
-  bottom: 24px;
+.footer {
+  height: 144px;
 }

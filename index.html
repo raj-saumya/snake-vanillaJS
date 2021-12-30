@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="main.css" />
   </head>
-  <body class="h-screen w-screen bg-lime-200 p-6">
+  <body class="h-screen w-screen flex flex-col bg-lime-200 p-6">
     <div class="flex flex-col">
       <div class="flex">
         <label class="font-mono text-base mb-2"
@@ -17,8 +17,8 @@
       </div>
       <div class="border-t border-emerald-900 mb-4"></div>
     </div>
-    <div id="main" class="relative"></div>
-    <div id="start" class="abs-center w-fit">
+    <div id="main" class="relative flex-1"></div>
+    <div id="start" class="footer flex items-center justify-center">
       <button
         class="
           shadow-lg shadow-black/20
@@ -37,8 +37,8 @@
         <label class="font-mono text-base text-white">START</label>
       </button>
     </div>
-    <div id="controller" class="abs-center w-fit hidden">
-      <div class="flex flex-col w-fit items-center">
+    <div id="controller" class="footer flex items-center justify-center hidden">
+      <div class="flex w-fit items-center">
         <button
           class="
             shadow-lg shadow-black/20
@@ -53,11 +53,12 @@
             justify-center
             rounded
           "
-          data-direction="up"
+          data-direction="left"
         >
-          <img class="h-4 w-auto" src="asset/icon-up.svg" alt="icon-up" />
+          <img class="h-4 w-auto" src="asset/icon-left.svg" alt="icon-left" />
         </button>
-        <div class="flex w-fit">
+
+        <div class="flex-col">
           <button
             class="
               shadow-lg shadow-black/20
@@ -72,9 +73,9 @@
               justify-center
               rounded
             "
-            data-direction="left"
+            data-direction="up"
           >
-            <img class="h-4 w-auto" src="asset/icon-left.svg" alt="icon-left" />
+            <img class="h-4 w-auto" src="asset/icon-up.svg" alt="icon-up" />
           </button>
           <button
             class="
@@ -94,29 +95,25 @@
           >
             <img class="h-4 w-auto" src="asset/icon-down.svg" alt="icon-down" />
           </button>
-          <button
-            class="
-              shadow-lg shadow-black/20
-              active:bg-blue-600
-              h-12
-              w-16
-              m-1
-              p-1
-              bg-black
-              flex
-              items-center
-              justify-center
-              rounded
-            "
-            data-direction="right"
-          >
-            <img
-              class="h-4 w-auto"
-              src="asset/icon-right.svg"
-              alt="icon-right"
-            />
-          </button>
         </div>
+        <button
+          class="
+            shadow-lg shadow-black/20
+            active:bg-blue-600
+            h-12
+            w-16
+            m-1
+            p-1
+            bg-black
+            flex
+            items-center
+            justify-center
+            rounded
+          "
+          data-direction="right"
+        >
+          <img class="h-4 w-auto" src="asset/icon-right.svg" alt="icon-right" />
+        </button>
       </div>
     </div>
   </body>
